@@ -1,17 +1,13 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 import './App.css'
 import Login from './login/Login'
 import Mainpage from './mainpage/Mainpage'
+import Context from './ContextWrapper'
 
 function App() {
-  const [authorized, setAuthorized] = useState(false)
-  const [email, setEmail] = useState('')
-  return (
-    <>
-      {authorized ? <Mainpage email={email} setAuthorized={setAuthorized} /> 
-      : <Login email={email} setEmail={setEmail} setAuthorized={setAuthorized} />}
-    </>
-  )
+  const { authorized } = useContext(Context)
+
+  return authorized ? <Mainpage />: <Login />;
 }
 
 export default App

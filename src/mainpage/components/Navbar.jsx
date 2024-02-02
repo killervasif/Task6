@@ -1,6 +1,9 @@
-import React from 'react'
+import { useContext } from 'react'
+import Context from '../../ContextWrapper'
 
-function Navbar({ email, setAuthorized }) {
+function Navbar() {
+  const { email, setAuthorized } = useContext(Context)
+
   return (
     <div className='w-full h-auto sm:h-[100px] bg-zinc-300 flex flex-col sm:flex-row justify-center sm:justify-between items-center px-4 sm:px-10'>
       <label className='text-xl my-2 sm:my-0 font-bold'>{email}</label>

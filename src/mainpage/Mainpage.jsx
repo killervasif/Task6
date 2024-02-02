@@ -1,11 +1,10 @@
 import { useEffect, useState, useContext, useReducer } from 'react'
 import Navbar from './components/Navbar'
 import TodoCard from './components/TodoCard'
-
-import Context from '../ContextWrapper'
 import CreateCard from './components/CreateCard'
-import EditCard from './components/EditCard'
 import DeleteCard from './components/DeleteCard'
+import EditCard from './components/EditCard'
+import Context from '../ContextWrapper'
 
 function Mainpage() {
 
@@ -25,34 +24,43 @@ function Mainpage() {
     }
 
     const { email } = useContext(Context)
-    const [openModal, setOpenModal] = useState('')
-    const [cards, setCards] = useState([])
     const [filteredCards, setFilteredCards] = useState([])
+    const [cards, setCards] = useState([])
     const [activeCard, setActiveCard] = useState()
     const [state, dispatch] = useReducer(reducer, { type: '' })
 
+    useEffect(() => {
+        const getCards = async () => {
+            const request = await fetch(`http://localhost:3000/cards/${email}`);
+            const response = await request.json()
+            setCards(response);
+        }
+
+        getCards()
+    }, [cards])
 
     useEffect(() => {
         setFilteredCards(cards.filter((card) => card.author === email));
     }, [cards])
+
     return (
-        <div className={`relative h-screen ${openModal ? 'overflow-hidden' : ''}`}>
+        <div className={`relative h-screen ${state.type ? 'overflow-hidden' : ''}`}>
 
             {state.type === "create" ?
                 <div className='fixed inset-0 flex justify-center items-center w-screen z-10 bg-opacity-50 bg-black'>
-                    <CreateCard setCards={setCards} dispatch={dispatch} email={email} />
+                    <CreateCard dispatch={dispatch} email={email} />
                 </div> : null
             }
 
             {state.type === "edit" ?
                 <div className='fixed inset-0 flex justify-center items-center w-screen z-10 bg-opacity-50 bg-black'>
-                    <EditCard activeCard={activeCard} setCards={setCards} dispatch={dispatch} />
+                    <EditCard activeCard={activeCard} dispatch={dispatch} />
                 </div> : null
             }
 
             {state.type === "delete" ?
                 <div className='fixed inset-0 flex justify-center items-center w-screen z-10 bg-opacity-50 bg-black'>
-                    <DeleteCard activeCard={activeCard} setCards={setCards} dispatch={dispatch} />
+                    <DeleteCard activeCard={activeCard} dispatch={dispatch} />
                 </div> : null
             }
 
@@ -69,4 +77,5 @@ function Mainpage() {
         </div>
     )
 }
+
 export default Mainpage

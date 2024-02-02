@@ -1,8 +1,26 @@
 import { useState } from 'react'
-import { v4 as uuidv4 } from "uuid"
 
-function CreateCard({ dispatch, setCards, email }) {
+function CreateCard({ dispatch, email }) {
     const [formData, setFormData] = useState({})
+
+    const createCard = async ()=>{
+        try {
+            const request = await fetch("http://localhost:3000/cards",
+            {
+                method: "POST",
+                mode: "cors",
+                body: JSON.stringify(formData),
+                headers: 
+                {
+                    "Content-type": "application/json"
+                }
+            })
+            const response = await request.json()
+            console.log(response)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -10,15 +28,14 @@ function CreateCard({ dispatch, setCards, email }) {
         setFormData((prevForm) => ({
             ...prevForm,
             [name]: value,
-            author: email,
-            id: uuidv4(),
+            author: email
         }))
     }
 
-    const createCard = (e) => {
+    const handleCreate = async (e) => {
         e.preventDefault();
-        setCards((prevValue) => [...prevValue, formData])
-        dispatch({ type: 'reset' })
+        createCard();
+        dispatch({type: "reset"})
     }
 
     return (
@@ -33,9 +50,10 @@ function CreateCard({ dispatch, setCards, email }) {
             </div>
             <div className='flex justify-center sm:justify-end sm:items-center w-full mt-5'>
                 <button onClick={() => dispatch({ type: 'reset' })} className='px-5 py-3 border rounded-[15px]  mx-2 bg-white hover:bg-[#DFDFDF]'>Close</button>
-                <button onClick={(e) => { createCard(e) }} className='px-5 py-3 border rounded-[15px] mx-5 bg-amber-400 hover:bg-amber-500'>Create</button>
+                <button onClick={(e) => { handleCreate(e) }} className='px-5 py-3 border rounded-[15px] mx-5 bg-amber-400 hover:bg-amber-500'>Create</button>
             </div>
         </form>
     )
 }
+
 export default CreateCard
